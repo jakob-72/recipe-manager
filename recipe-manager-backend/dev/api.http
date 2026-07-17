@@ -1,0 +1,120 @@
+@recipeId = b4724f4f-9917-468a-9366-de761c61d892
+
+### Get JWT token from Keycloak and store it as {{access_token}}
+POST http://localhost:8081/realms/recipe-manager/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id = recipe-manager-frontend
+    &
+grant_type = password
+    &
+username = testuser
+    &
+password = test123
+
+> {%
+    client.global.set("access_token", response.body.access_token);
+%}
+
+
+### GET all recipes
+GET http://localhost:8080/api/recipes
+Authorization: Bearer {{access_token}}
+
+### GET recipe by ID
+GET http://localhost:8080/api/recipes/{{recipeId}}
+Authorization: Bearer {{access_token}}
+
+### GET recipe with query parameter
+GET http://localhost:8080/api/recipes?ingredient=avocado
+Authorization: Bearer {{access_token}}
+
+### POST new recipe
+POST http://localhost:8080/api/recipes
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Avocado Toast",
+  "ingredients": [
+    {
+      "ingredientName": "bread",
+      "quantity": 2,
+      "unit": "slices"
+    },
+    {
+      "ingredientName": "avocado",
+      "quantity": 1,
+      "unit": "whole"
+    },
+    {
+      "ingredientName": "salt",
+      "quantity": 0.5,
+      "unit": "tsp"
+    },
+    {
+      "ingredientName": "pepper",
+      "quantity": 0.5,
+      "unit": "tsp"
+    },
+    {
+      "ingredientName": "lemon juice",
+      "quantity": 1,
+      "unit": "tsp"
+    }
+  ],
+  "instructions": "1. Toast the bread slices.\n2. Mash the avocado in a bowl and mix in salt, pepper, and lemon juice.\n3. Spread the avocado mixture on the toasted bread.\n4. Serve immediately.",
+  "difficulty": 2
+}
+
+### PUT update recipe by ID
+PUT http://localhost:8080/api/recipes/{{recipeId}}
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Avocado Toast",
+  "ingredients": [
+    {
+      "ingredientName": "bread",
+      "quantity": 2,
+      "unit": "slices"
+    },
+    {
+      "ingredientName": "avocado",
+      "quantity": 1,
+      "unit": "whole"
+    },
+    {
+      "ingredientName": "salt",
+      "quantity": 0.5,
+      "unit": "tsp"
+    },
+    {
+      "ingredientName": "pepper",
+      "quantity": 0.5,
+      "unit": "tsp"
+    },
+    {
+      "ingredientName": "lemon juice",
+      "quantity": 0.5,
+      "unit": "tsp"
+    },
+    {
+      "ingredientName": "cherry tomatoes",
+      "quantity": 2,
+      "unit": "whole"
+    }
+  ],
+  "instructions": "1. Toast the bread slices.\n2. Mash the avocado in a bowl and mix in salt, pepper, and lemon juice.\n3. Spread the avocado mixture on the toasted bread.\n4. Top with halved cherry tomatoes.\n5. Serve immediately.",
+  "difficulty": 2,
+  "tags": [
+    "vegetarian",
+    "quick",
+    "breakfast"
+  ]
+}
+
+### DELETE recipe by ID
+DELETE http://localhost:8080/api/recipes/{{recipeId}}
+Authorization: Bearer {{access_token}}
