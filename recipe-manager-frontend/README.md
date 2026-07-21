@@ -54,7 +54,7 @@ authentication and consumes the Recipe Manager REST API.
    Frontend runs on `http://localhost:5173`.
 
 4. Open `http://localhost:5173` in your browser. You'll be redirected to Keycloak login.
-    - Default credentials: `testuser` / `test123`
+   - Default credentials: `testuser` / `test123`
 
 ## Environment Variables
 
@@ -68,7 +68,7 @@ VITE_IAM_CLIENT_ID=recipe-manager-frontend
 ```
 
 | Variable             | Default                   | Purpose                |
-|----------------------|---------------------------|------------------------|
+| -------------------- | ------------------------- | ---------------------- |
 | `VITE_API_URL`       | `http://localhost:8080`   | Backend API base URL   |
 | `VITE_IAM_URL`       | `http://localhost:8081`   | Keycloak server URL    |
 | `VITE_IAM_REALM`     | `recipe-manager`          | Keycloak realm name    |
@@ -77,7 +77,7 @@ VITE_IAM_CLIENT_ID=recipe-manager-frontend
 ## Scripts
 
 | Command           | Purpose                             |
-|-------------------|-------------------------------------|
+| ----------------- | ----------------------------------- |
 | `npm run dev`     | Start dev server                    |
 | `npm run build`   | Type-check and build for production |
 | `npm run preview` | Preview production build locally    |
@@ -109,7 +109,7 @@ eslint.config.js          # ESLint rules
 The frontend makes requests to the backend's `/api/recipes` endpoints, always including a Bearer token from Keycloak:
 
 ```typescript
-Authorization: Bearer <access_token>
+Authorization: Bearer<access_token>;
 ```
 
 Responses are cached and synchronized via React Query for seamless UX. See `src/api/` for client implementation.

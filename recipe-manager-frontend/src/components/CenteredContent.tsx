@@ -18,7 +18,7 @@ export const CenteredContent = ({ children }: CenteredContentProps) => (
   >
     <Card sx={{ width: '100%', maxWidth: 1480 }}>
       <CardContent sx={{ py: 6, px: 4 }}>
-        <Stack spacing={3} alignItems="center" textAlign="center">
+        <Stack direction="column" spacing={4} sx={{ width: '100%', alignItems: 'center' }}>
           {children}
         </Stack>
       </CardContent>

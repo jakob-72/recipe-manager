@@ -24,12 +24,15 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleHttpMessageNotReadableException(e: HttpMessageNotReadableException): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body("Malformed JSON request: ${e.message}")
+        ResponseEntity
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .body("Malformed JSON request: ${e.message}")
             .also { logger.warn("Malformed JSON: ${e.message}") }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleConstraintViolationException(e: MethodArgumentNotValidException): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        ResponseEntity
+            .status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(
                 e.bindingResult.fieldErrors
                     .map { it.field }
@@ -47,22 +50,30 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNoSuchElementException(e: NoSuchElementException): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found")
+        ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body("Not found")
             .also { logger.warn("NoSuchElementException: ${e.message}") }
 
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthenticationException(e: AuthenticationException): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: ${e.message}")
+        ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body("Unauthorized: ${e.message}")
             .also { logger.warn("AuthenticationException: ${e.message}") }
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDeniedException(e: AccessDeniedException): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: ${e.message}")
+        ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body("Access denied: ${e.message}")
             .also { logger.warn("AccessDeniedException: ${e.message}") }
 
     @ExceptionHandler(Exception::class)
     fun handleGenericException(e: Exception): ResponseEntity<String> =
-        ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-            "An unexpected error occurred: ${e.message}",
-        ).also { logger.error("Unexpected exception", e) }
+        ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(
+                "An unexpected error occurred: ${e.message}",
+            ).also { logger.error("Unexpected exception", e) }
 }

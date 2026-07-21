@@ -28,7 +28,9 @@ import org.springframework.web.bind.annotation.RestController
     origins = ["*"],
     methods = [RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE],
 )
-class RecipeController(private val service: RecipeService) {
+class RecipeController(
+    private val service: RecipeService,
+) {
     @GetMapping("/recipes")
     fun getAllRecipes(
         @RequestParam(required = false) ingredient: String?,

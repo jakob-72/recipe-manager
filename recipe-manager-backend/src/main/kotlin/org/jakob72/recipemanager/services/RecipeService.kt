@@ -29,7 +29,8 @@ class RecipeService(
     ): Recipe {
         val recipeId = id.toUUID()
         val userUuid = userId.toUUID()
-        return recipeRepository.findByIdAndUserId(recipeId, userUuid)
+        return recipeRepository
+            .findByIdAndUserId(recipeId, userUuid)
             .orElseThrow { NoSuchElementException("Recipe not found") }
     }
 
@@ -62,16 +63,17 @@ class RecipeService(
         }
 
         val recipeIngredients =
-            recipe.ingredients.map {
-                val ingredient =
-                    ingredientRepository.findByNameIgnoreCase(it.ingredientName)
-                        ?: ingredientRepository.save(Ingredient(name = it.ingredientName))
-                RecipeIngredient(
-                    ingredient = ingredient,
-                    quantity = it.quantity,
-                    unit = it.unit,
-                )
-            }.toMutableList()
+            recipe.ingredients
+                .map {
+                    val ingredient =
+                        ingredientRepository.findByNameIgnoreCase(it.ingredientName)
+                            ?: ingredientRepository.save(Ingredient(name = it.ingredientName))
+                    RecipeIngredient(
+                        ingredient = ingredient,
+                        quantity = it.quantity,
+                        unit = it.unit,
+                    )
+                }.toMutableList()
 
         val entity =
             Recipe(
@@ -117,17 +119,18 @@ class RecipeService(
             )
 
         val updatedIngredients =
-            recipe.ingredients.map {
-                val ingredient =
-                    ingredientRepository.findByNameIgnoreCase(it.ingredientName)
-                        ?: ingredientRepository.save(Ingredient(name = it.ingredientName))
-                RecipeIngredient(
-                    ingredient = ingredient,
-                    quantity = it.quantity,
-                    unit = it.unit,
-                    recipe = updatedRecipe,
-                )
-            }.toMutableList()
+            recipe.ingredients
+                .map {
+                    val ingredient =
+                        ingredientRepository.findByNameIgnoreCase(it.ingredientName)
+                            ?: ingredientRepository.save(Ingredient(name = it.ingredientName))
+                    RecipeIngredient(
+                        ingredient = ingredient,
+                        quantity = it.quantity,
+                        unit = it.unit,
+                        recipe = updatedRecipe,
+                    )
+                }.toMutableList()
 
         updatedRecipe.ingredients = updatedIngredients
 
