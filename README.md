@@ -101,6 +101,7 @@ environment-specific configuration and secrets with TLS enabled end to end.
 
 ## Future improvements
 
+- [ ] Develop a MCP-Server or CLI for LLM-integrations.
 - [ ] Add OpenAPI documentation.
 - [ ] Add Swagger UI for API exploration.
 - [ ] Add frontend integration tests (Cypress or Playwright).

@@ -1,4 +1,4 @@
-@recipeId = b4724f4f-9917-468a-9366-de761c61d892
+@recipeId = 497f338c-d473-4ec3-a7f6-cd5f19b90d79
 
 ### Get JWT token from Keycloak and store it as {{access_token}}
 POST http://localhost:8081/realms/recipe-manager/protocol/openid-connect/token

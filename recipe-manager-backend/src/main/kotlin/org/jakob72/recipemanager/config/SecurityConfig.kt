@@ -16,8 +16,7 @@ class SecurityConfig {
                 it.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 it.requestMatchers("/api/**").authenticated()
                 it.anyRequest().permitAll()
-            }
-            .oauth2ResourceServer {
+            }.oauth2ResourceServer {
                 it.jwt { }
             }
         return http.build()
