@@ -4,7 +4,7 @@ import { Alert, CircularProgress, Fab } from '@mui/material';
 import { RecipeTable } from './RecipeTable.tsx';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router';
-import type { Recipe } from '../types.ts';
+import type { SavedRecipe } from '../types.ts';
 
 export const RecipesPageBody = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export const RecipesPageBody = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (recipe: Recipe) => deleteRecipe(recipe.id!),
+    mutationFn: (recipe: SavedRecipe) => deleteRecipe(recipe.id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recipes'] }),
   });
 

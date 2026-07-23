@@ -1,5 +1,5 @@
 import { type KeyboardEventHandler, useMemo, useState } from 'react';
-import type { Ingredient, Recipe } from '../types.ts';
+import type { Ingredient, RecipeUpsert, SavedRecipe } from '../types.ts';
 import {
   Box,
   Button,
@@ -20,22 +20,27 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface RecipeFormProps {
-  recipe?: Recipe;
-  onSubmit: (recipe: Recipe) => void;
+  recipe?: SavedRecipe;
+  onSubmit: (recipe: RecipeUpsert) => void;
 }
 
-const emptyIngredient = (): Ingredient => ({
-  ingredientName: '',
-  quantity: 0,
-  unit: '',
+type IngredientRow = Ingredient & { id: string };
+
+const createIngredientRow = (ingredient?: Ingredient): IngredientRow => ({
+  ingredientName: ingredient?.ingredientName ?? '',
+  quantity: ingredient?.quantity ?? 0,
+  unit: ingredient?.unit ?? '',
+  id: crypto.randomUUID(),
 });
 
 export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
   const [name, setName] = useState(recipe?.name ?? '');
   const [difficulty, setDifficulty] = useState<number>(recipe?.difficulty ?? 0);
   const [instructions, setInstructions] = useState(recipe?.instructions ?? '');
-  const [ingredients, setIngredients] = useState<Ingredient[]>(
-    recipe?.ingredients?.length ? recipe.ingredients : [emptyIngredient()],
+  const [ingredients, setIngredients] = useState<IngredientRow[]>(() =>
+    recipe?.ingredients?.length
+      ? recipe.ingredients.map(createIngredientRow)
+      : [createIngredientRow()],
   );
   const [tags, setTags] = useState<string[]>(recipe?.tags ?? []);
   const [tagInput, setTagInput] = useState('');
@@ -75,42 +80,44 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
     setTags((prev) => prev.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleIngredientChange = (
-    index: number,
-    field: keyof Ingredient,
-    value: string | number,
-  ) => {
+  const handleIngredientChange = (id: string, field: keyof Ingredient, value: string | number) => {
     setIngredients((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     );
   };
 
   const handleAddIngredient = () => {
-    setIngredients((prev) => [...prev, emptyIngredient()]);
+    setIngredients((prev) => [...prev, createIngredientRow()]);
   };
 
-  const handleRemoveIngredient = (index: number) => {
+  const handleRemoveIngredient = (id: string) => {
     setIngredients((prev) => {
       if (prev.length === 1) return prev;
-      return prev.filter((_, i) => i !== index);
+      return prev.filter((ingredient) => ingredient.id !== id);
     });
   };
 
   const handleSave = () => {
     if (!isFormValid) return;
 
-    onSubmit({
-      id: recipe?.id ?? '',
+    const normalizedRecipe = {
       name: name.trim(),
       difficulty,
       instructions: instructions.trim(),
-      ingredients: ingredients.map((ingredient) => ({
-        ingredientName: ingredient.ingredientName.trim(),
-        quantity: ingredient.quantity,
-        unit: ingredient.unit.trim(),
+      ingredients: ingredients.map(({ ingredientName, quantity, unit }) => ({
+        ingredientName: ingredientName.trim(),
+        quantity,
+        unit: unit.trim(),
       })),
       tags,
-    });
+    };
+
+    if (recipe) {
+      onSubmit({ ...normalizedRecipe, id: recipe.id });
+      return;
+    }
+
+    onSubmit(normalizedRecipe);
   };
 
   const requiredMark = (
@@ -147,7 +154,7 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
                 {requiredMark}
               </TableCell>
               <TableCell>
-                <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                   <Rating
                     value={difficulty}
                     max={5}
@@ -188,7 +195,7 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
                       No tags
                     </Typography>
                   ) : (
-                    <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                    <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexWrap: 'wrap' }}>
                       {tags.map((tag) => (
                         <Chip
                           key={tag}
@@ -210,14 +217,23 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
               </TableCell>
               <TableCell>
                 <Stack spacing={1}>
-                  {ingredients.map((ingredient, index) => (
-                    <Stack key={index} direction="row" spacing={1} alignItems="center">
+                  {ingredients.map((ingredient) => (
+                    <Stack
+                      key={ingredient.id}
+                      direction="row"
+                      spacing={1}
+                      sx={{ alignItems: 'center' }}
+                    >
                       <TextField
                         size="small"
                         label="Ingredient"
                         value={ingredient.ingredientName}
                         onChange={(event) =>
-                          handleIngredientChange(index, 'ingredientName', event.target.value)
+                          handleIngredientChange(
+                            ingredient.id,
+                            'ingredientName',
+                            event.target.value,
+                          )
                         }
                         sx={{ flex: 2 }}
                         required
@@ -228,7 +244,11 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
                         type="number"
                         value={ingredient.quantity}
                         onChange={(event) =>
-                          handleIngredientChange(index, 'quantity', Number(event.target.value))
+                          handleIngredientChange(
+                            ingredient.id,
+                            'quantity',
+                            Number(event.target.value),
+                          )
                         }
                         sx={{ flex: 1 }}
                         required
@@ -238,7 +258,7 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
                         label="Unit"
                         value={ingredient.unit}
                         onChange={(event) =>
-                          handleIngredientChange(index, 'unit', event.target.value)
+                          handleIngredientChange(ingredient.id, 'unit', event.target.value)
                         }
                         sx={{ flex: 1 }}
                         required
@@ -246,7 +266,7 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
                       <IconButton
                         type="button"
                         aria-label="remove ingredient"
-                        onClick={() => handleRemoveIngredient(index)}
+                        onClick={() => handleRemoveIngredient(ingredient.id)}
                         disabled={ingredients.length === 1}
                       >
                         <DeleteIcon />
@@ -287,7 +307,7 @@ export const RecipeForm = ({ recipe, onSubmit }: RecipeFormProps) => {
         </Table>
       </TableContainer>
 
-      <Stack direction="row" justifyContent="flex-end" sx={{ mt: 2 }}>
+      <Stack direction="row" sx={{ justifyContent: 'flex-end', mt: 2 }}>
         <Button type="button" variant="contained" disabled={!isFormValid} onClick={handleSave}>
           Save
         </Button>

@@ -1,4 +1,4 @@
-import type { Ingredient, Recipe } from '../types.ts';
+import type { Ingredient, SavedRecipe } from '../types.ts';
 import {
   Alert,
   Button,
@@ -23,13 +23,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface RecipeTableProps {
-  recipes: Recipe[];
-  onDeleteConfirm: (recipe: Recipe) => void;
+  recipes: SavedRecipe[];
+  onDeleteConfirm: (recipe: SavedRecipe) => void;
 }
 
 export const RecipeTable = ({ recipes, onDeleteConfirm }: RecipeTableProps) => {
   const navigate = useNavigate();
-  const [pendingDeleteRecipe, setPendingDeleteRecipe] = useState<Recipe | null>(null);
+  const [pendingDeleteRecipe, setPendingDeleteRecipe] = useState<SavedRecipe | null>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -42,7 +42,7 @@ export const RecipeTable = ({ recipes, onDeleteConfirm }: RecipeTableProps) => {
     );
   }
 
-  const columns: GridColDef<Recipe>[] = [
+  const columns: GridColDef<SavedRecipe>[] = [
     {
       field: 'name',
       headerName: 'Recipe Name',
@@ -55,7 +55,7 @@ export const RecipeTable = ({ recipes, onDeleteConfirm }: RecipeTableProps) => {
       headerName: 'ingredients',
       flex: 2,
       minWidth: 140,
-      valueGetter: (_value, row: Recipe) =>
+      valueGetter: (_value, row: SavedRecipe) =>
         row.ingredients.map((ingredient: Ingredient) => ingredient.ingredientName).join(', '),
     },
     {

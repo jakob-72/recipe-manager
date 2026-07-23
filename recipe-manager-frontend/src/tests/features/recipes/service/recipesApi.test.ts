@@ -15,7 +15,7 @@ import {
   saveRecipe,
   deleteRecipe,
 } from '../../../../features/recipes/service/recipesApi.ts';
-import type { Recipe } from '../../../../features/recipes/types.ts';
+import type { Recipe, RecipeDraft } from '../../../../features/recipes/types.ts';
 
 const mockedGet = vi.mocked(get);
 const mockedPost = vi.mocked(post);
@@ -80,8 +80,14 @@ describe('recipesApi', () => {
 
   describe('saveRecipe', () => {
     it('should call post when recipe has no id', async () => {
-      const newRecipe = { ...recipe, id: '' };
-      mockedPost.mockResolvedValue(newRecipe);
+      const newRecipe: RecipeDraft = {
+        name: recipe.name,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        difficulty: recipe.difficulty,
+        tags: recipe.tags,
+      };
+      mockedPost.mockResolvedValue(recipe);
 
       await saveRecipe(newRecipe);
 
@@ -101,7 +107,15 @@ describe('recipesApi', () => {
     it('should rethrow errors from post', async () => {
       mockedPost.mockRejectedValue(new ApiError('Server error', 500));
 
-      await expect(saveRecipe({ ...recipe, id: '' })).rejects.toThrow();
+      const newRecipe: RecipeDraft = {
+        name: recipe.name,
+        ingredients: recipe.ingredients,
+        instructions: recipe.instructions,
+        difficulty: recipe.difficulty,
+        tags: recipe.tags,
+      };
+
+      await expect(saveRecipe(newRecipe)).rejects.toThrow();
     });
 
     it('should rethrow errors from put', async () => {

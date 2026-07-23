@@ -1,4 +1,4 @@
-import type { Recipe } from '../types.ts';
+import type { SavedRecipe } from '../types.ts';
 import {
   Box,
   Chip,
@@ -16,7 +16,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 
 interface RecipeDetailsTableProps {
-  recipe: Recipe;
+  recipe: SavedRecipe;
   onEdit: () => void;
 }
 
@@ -47,7 +47,7 @@ export const RecipeDetailsTable = ({ recipe, onEdit }: RecipeDetailsTableProps) 
           <TableRow>
             <TableCell sx={{ fontWeight: 700 }}>Difficulty</TableCell>
             <TableCell>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 <Rating value={recipe.difficulty} max={5} readOnly />
                 <Typography variant="body2">{recipe.difficulty}/5</Typography>
               </Stack>
@@ -62,7 +62,7 @@ export const RecipeDetailsTable = ({ recipe, onEdit }: RecipeDetailsTableProps) 
                   No tags
                 </Typography>
               ) : (
-                <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+                <Stack direction="row" spacing={0.75} useFlexGap sx={{ flexWrap: 'wrap' }}>
                   {recipe.tags.map((tag) => (
                     <Chip key={tag} label={tag} size="small" />
                   ))}

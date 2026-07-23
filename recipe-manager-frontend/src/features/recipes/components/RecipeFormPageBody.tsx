@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert, CircularProgress, Snackbar } from '@mui/material';
 import { RecipeForm } from './RecipeForm.tsx';
 import { getRecipeById, saveRecipe } from '../service/recipesApi.ts';
-import type { Recipe } from '../types.ts';
+import type { RecipeUpsert, SavedRecipe } from '../types.ts';
 import type { ApiError } from '../../../shared/apiError.ts';
 import { CenteredContent } from '../../../components/CenteredContent.tsx';
 import { NotFound } from '../../../components/NotFound.tsx';
@@ -33,7 +33,7 @@ export const RecipeFormPageBody = ({ recipeId }: RecipeFormPageBodyProps) => {
     isPending,
     error: mutationError,
     reset,
-  } = useMutation<Recipe | null, ApiError, Recipe>({
+  } = useMutation<SavedRecipe | null, ApiError, RecipeUpsert>({
     mutationKey: ['saveRecipe'],
     mutationFn: saveRecipe,
     onSuccess: async () => {
@@ -46,7 +46,7 @@ export const RecipeFormPageBody = ({ recipeId }: RecipeFormPageBodyProps) => {
     },
   });
 
-  const handleSubmit = useCallback((recipe: Recipe) => mutate(recipe), [mutate]);
+  const handleSubmit = useCallback((recipe: RecipeUpsert) => mutate(recipe), [mutate]);
 
   const handleCloseMutationError = useCallback(() => reset(), [reset]);
 

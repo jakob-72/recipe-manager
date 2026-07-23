@@ -23,9 +23,15 @@ export const get = async <T>(path: string): Promise<T> => {
   return response.json();
 };
 
-export const post = async <T>(path: string, body: T): Promise<T> => sendData(path, body, 'POST');
+export const post = async <TResponse, TBody = TResponse>(
+  path: string,
+  body: TBody,
+): Promise<TResponse> => sendData<TResponse, TBody>(path, body, 'POST');
 
-export const put = async <T>(path: string, body: T): Promise<T> => sendData(path, body, 'PUT');
+export const put = async <TResponse, TBody = TResponse>(
+  path: string,
+  body: TBody,
+): Promise<TResponse> => sendData<TResponse, TBody>(path, body, 'PUT');
 
 export const deleteRequest = async (path: string): Promise<void> => {
   const token = await getValidToken();
@@ -44,7 +50,11 @@ export const deleteRequest = async (path: string): Promise<void> => {
   }
 };
 
-const sendData = async <T>(path: string, body: T, method: 'POST' | 'PUT'): Promise<T> => {
+const sendData = async <TResponse, TBody>(
+  path: string,
+  body: TBody,
+  method: 'POST' | 'PUT',
+): Promise<TResponse> => {
   const token = await getValidToken();
 
   const response = await fetch(`${baseUrl}${path}`, {

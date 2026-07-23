@@ -12,10 +12,12 @@ import { NotFound } from './components/NotFound.tsx';
 import { AddRecipe } from './pages/AddRecipe.tsx';
 import { EditRecipe } from './pages/EditRecipe.tsx';
 
+const queryClient = new QueryClient();
+
 export const App = () => {
   return (
     <ReactKeycloakProvider authClient={keycloak}>
-      <QueryClientProvider client={new QueryClient()}>
+      <QueryClientProvider client={queryClient}>
         <CssBaseline />
         <BrowserRouter>
           <Routes>
