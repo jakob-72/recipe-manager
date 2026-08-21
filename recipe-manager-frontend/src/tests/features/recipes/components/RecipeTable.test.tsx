@@ -107,39 +107,39 @@ describe('RecipeTable', () => {
     it('opens the confirmation dialog with the recipe name when delete is clicked', () => {
       renderRecipeTable();
 
-      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+      fireEvent.click(screen.getByLabelText(/delete/i));
 
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getAllByText(/Pasta/).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByRole('dialog')).toHaveTextContent('Pasta');
+      expect(screen.getByText('Delete Recipe')).toBeInTheDocument();
+      expect(screen.getByText(/are you sure you want to delete/i)).toBeInTheDocument();
+      expect(screen.getByText('Pasta', { selector: 'strong' })).toBeInTheDocument();
     });
 
     it('closes the dialog when Cancel is clicked', async () => {
       renderRecipeTable();
 
-      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
-      fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      fireEvent.click(screen.getByLabelText(/delete/i));
+      fireEvent.click(screen.getByText(/^Cancel$/i));
 
-      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() => expect(screen.queryByText('Delete Recipe')).not.toBeInTheDocument());
     });
 
     it('calls onDeleteConfirm with the recipe and closes the dialog when Delete is confirmed', async () => {
       const onDeleteConfirm = vi.fn();
       renderRecipeTable([recipe], onDeleteConfirm);
 
-      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
-      fireEvent.click(screen.getByRole('button', { name: /^delete$/i }));
+      fireEvent.click(screen.getByLabelText(/delete/i));
+      fireEvent.click(screen.getByText(/^Delete$/i));
 
       expect(onDeleteConfirm).toHaveBeenCalledWith(recipe);
-      await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+      await waitFor(() => expect(screen.queryByText('Delete Recipe')).not.toBeInTheDocument());
     });
 
     it('does not call onDeleteConfirm when Cancel is clicked', () => {
       const onDeleteConfirm = vi.fn();
       renderRecipeTable([recipe], onDeleteConfirm);
 
-      fireEvent.click(screen.getByRole('button', { name: /delete/i }));
-      fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      fireEvent.click(screen.getByLabelText(/delete/i));
+      fireEvent.click(screen.getByText(/^Cancel$/i));
 
       expect(onDeleteConfirm).not.toHaveBeenCalled();
     });

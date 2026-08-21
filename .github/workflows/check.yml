@@ -47,11 +47,11 @@ jobs:
 
       - name: Run ESLint
         working-directory: recipe-manager-frontend
-        run: npm run lint
+        run: npm run lint -- --max-warnings=0
 
       - name: Run Tests
         working-directory: recipe-manager-frontend
-        run: npm test
+        run: npm run test -- --run
 
   scan-vulnerabilities:
     name: Scan Vulnerabilities

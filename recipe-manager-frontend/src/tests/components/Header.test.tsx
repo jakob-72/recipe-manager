@@ -71,7 +71,7 @@ describe('Header', () => {
     expect(loginMock).toHaveBeenCalledWith(window.location.href);
   });
 
-  it('calls logout from auth hook when logout button is clicked', async () => {
+  it('calls logout from auth hook when logout button is clicked', () => {
     const logoutMock = vi.fn();
 
     mockedAuthHook.mockReturnValue({
@@ -84,7 +84,7 @@ describe('Header', () => {
     renderHeader();
 
     fireEvent.click(screen.getByRole('button', { name: /open user menu/i }));
-    fireEvent.click(await screen.findByRole('menuitem', { name: /logout/i }));
+    fireEvent.click(screen.getByText(/logout/i));
 
     expect(logoutMock).toHaveBeenCalledTimes(1);
   });
